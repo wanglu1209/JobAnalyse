@@ -7,7 +7,6 @@ import android.view.View
 import android.webkit.*
 import android.webkit.CookieSyncManager.createInstance
 import android.webkit.CookieSyncManager.getInstance
-import butterknife.ButterKnife
 import com.wanglu.jobanalyse.R
 import kotlinx.android.synthetic.main.activity_common_web.*
 import kotlinx.android.synthetic.main.view_toolbar.*
@@ -27,7 +26,6 @@ class CommonWebActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_common_web)
-        ButterKnife.bind(this)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar!!.post { toolbar!!.title = intent.getStringExtra("title") }

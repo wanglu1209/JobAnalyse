@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
-import butterknife.ButterKnife
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.adapter.MainJobAdapter
 import com.wanglu.jobanalyse.model.MainJob
@@ -32,7 +31,6 @@ class SearchJobActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_job)
-        ButterKnife.bind(this)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.post { toolbar.title = "搜索" }

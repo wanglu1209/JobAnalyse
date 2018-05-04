@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.orhanobut.hawk.Hawk
 import com.wanglu.jobanalyse.R
@@ -45,7 +44,6 @@ class AnalyseActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analyse)
-        ButterKnife.bind(this)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
