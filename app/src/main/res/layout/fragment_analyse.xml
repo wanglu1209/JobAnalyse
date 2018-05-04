@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/gray1"
+              android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/layout_salary"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableTop="@mipmap/icon_salary_analyse"
+                android:gravity="center"
+                android:text="薪资分析"
+                android:textColor="#444"
+                android:textSize="@dimen/sp_18"/>
+        </FrameLayout>
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/gray1"/>
+
+        <FrameLayout
+            android:id="@+id/layout_district"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableTop="@mipmap/icon_district_analyse"
+                android:gravity="center"
+                android:text="区域分析"
+                android:textColor="#444"
+                android:textSize="@dimen/sp_18"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray1"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/layout_create_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableTop="@mipmap/icon_createtime_analyse"
+                android:gravity="center"
+                android:text="发布时间"
+                android:textColor="#444"
+                android:textSize="@dimen/sp_18"/>
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/gray1"/>
+
+        <FrameLayout
+            android:id="@+id/layout_work_year"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableTop="@mipmap/icon_work_year_analyse"
+                android:gravity="center"
+                android:text="工作年限"
+                android:textColor="#444"
+                android:textSize="@dimen/sp_18"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray1"/>
+
+
+    <LinearLayout
+        android:id="@+id/layout_company_info"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/dp_5"
+            android:drawableTop="@mipmap/icon_company_industry"
+            android:gravity="center"
+            android:text="公司情况"
+            android:textColor="#444"
+            android:textSize="@dimen/sp_18"/>
+
+    </LinearLayout>
+
+</LinearLayout>

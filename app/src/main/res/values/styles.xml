@@ -1,0 +1,42 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="MainTheme" parent="AppTheme.NoActionBar">
+
+        <item name="android:textColorPrimary">@color/colorText444</item>
+        <item name="android:textColorSecondary">@color/colorText444</item>
+    </style>
+
+    <!--带搜索框的Activity使用-->
+    <style name="SearchActivityTheme" parent="AppTheme.NoActionBar">
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+    </style>
+
+    <style name="ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">
+        <!--<item name="contentInsetStart">0dp</item>-->
+        <!--<item name="contentInsetStartWithNavigation">0dp</item>-->
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+</resources>

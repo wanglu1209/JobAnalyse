@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">JobAnalyse</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_list">Job List</string>
+    <string name="title_analyse">Job Analyse</string>
+    <string name="title_set">Job Set</string>
+</resources>
