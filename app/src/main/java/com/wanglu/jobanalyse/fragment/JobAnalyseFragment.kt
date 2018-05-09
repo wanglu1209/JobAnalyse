@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.activity.AnalyseActivity
-import kotlinx.android.synthetic.main.fragment_analyse.*
+import kotlinx.android.synthetic.main.fragment_job_analyse.*
 
 /**
  * Created by WangLu on 2018/4/24.
@@ -17,7 +17,7 @@ class JobAnalyseFragment : BaseFragment(), View.OnClickListener{
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_analyse, container, false)
+        return inflater.inflate(R.layout.fragment_job_analyse, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
