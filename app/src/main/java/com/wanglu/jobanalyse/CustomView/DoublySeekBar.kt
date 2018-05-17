@@ -1,3 +1,4 @@
+package com.wanglu.jobanalyse.CustomView
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,164 +15,205 @@ import com.wanglu.jobanalyse.R
  */
 class DoublySeekBar(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private val SELECTED_LEFT = "L"
-    private val SELECTED_RIGHT = "R"
+    private val mBgLinePaint: Paint = Paint()
+    private val mFgLinePaint: Paint = Paint()
+    private var mHandBitmap: Bitmap
 
-    private val backgroundLinePaint: Paint = Paint()    // 灰色线条 未选中区域
-    private val selectedLinePaint: Paint = Paint()      // 选中线条
-    private val textPaint: Paint = Paint()          // 文本
-    private var mWidth = 0
-    private var mHeight = 0
-    private val padding = 100
-    private var leftArrow: Bitmap
-    private var rightArrow: Bitmap
+    private var mBgHeight: Float
+    private var mFgHeight: Float
+    private var mBgLeftPadding: Float
+    private var mBgRightPadding: Float
+    private var mFgLeftPadding: Float
+    private var mFgRightPadding: Float
+    private var mHandLeftPadding: Float
+    private var mHandRightPadding: Float
+
+    private var leftOffset: Float
+    private var rightOffset = 0f
+
+    private var selectedHand = ""
+    private var interval = 0
     private var lastX = 0f
     private var lastY = 0f
-    private var leftArrowPosition: Float
-    private var leftOffset = padding
-    private var rightOffset = 0
-    private var selectedArrow = ""
-    private var interval = 0
+    private var mText: List<String>? = null
 
-    private var mText: List<String>? = null         // 上方显示的文字
-
+    private var mHeight: Float
+    private var mWidth = 0f
     private var leftText: String = ""
     private var rightText: String = ""
+
+    private var mTextChangeListener: OnTextChangedListener? = null
+    private var value = Value("", "")
+
+    init {
+        mBgLinePaint.strokeJoin = Paint.Join.ROUND
+        mBgLinePaint.isAntiAlias = true
+        mFgLinePaint.isAntiAlias = true
+        mHandBitmap = changeBitmapSize(R.drawable.hand, dp2px(context!!, 15f).toInt(), dp2px(context, 15f).toInt())
+        mBgHeight = mHandBitmap.height + dp2px(context, 45f)    // 背景圆角矩形的高
+        mFgHeight = mBgHeight - dp2px(context, 8f)
+
+        mBgLeftPadding = dp2px(context, 20f)
+        mBgRightPadding = dp2px(context, 20f)
+        mHeight = mBgHeight + dp2px(context, 10f)   // 整个View的高度
+
+
+        mFgLeftPadding = mBgLeftPadding + dp2px(context, 8f)     // 前景的边距
+        mFgRightPadding = mBgRightPadding + dp2px(context, 8f)
+
+        mHandLeftPadding = mFgLeftPadding + dp2px(context, 15f)     // 手拖动的边距
+        mHandRightPadding = mFgRightPadding + dp2px(context, 15f) + mHandBitmap.width
+
+        leftOffset = mFgLeftPadding
+    }
+
 
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    init {
-        val a = context!!.obtainStyledAttributes(attrs, R.styleable.DoublySeekBar, defStyleAttr, 0)
-        backgroundLinePaint.color = Color.GRAY
-        backgroundLinePaint.strokeWidth = 10f
-        selectedLinePaint.strokeWidth = 10f
-        selectedLinePaint.color = a.getColor(R.styleable.DoublySeekBar_selectedLineColor, Color.RED)
-        textPaint.color = Color.BLACK
-        textPaint.textSize = dp2px(context, 16f).toFloat()
-        leftArrow = BitmapFactory.decodeResource(context.resources, a.getResourceId(R.styleable.DoublySeekBar_leftPic, R.drawable.arrow_up))
-        rightArrow = BitmapFactory.decodeResource(context.resources, a.getResourceId(R.styleable.DoublySeekBar_rightPic, R.drawable.arrow_up))
-        leftArrowPosition = leftArrow.width.toFloat() / 2
-    }
-
     @SuppressLint("DrawAllocation")
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        var specMode: Int = View.MeasureSpec.getMode(widthMeasureSpec)
+
+        val specMode: Int = View.MeasureSpec.getMode(widthMeasureSpec)
         var specSize = 0
 
         when (specMode) {
             View.MeasureSpec.EXACTLY, View.MeasureSpec.AT_MOST, View.MeasureSpec.UNSPECIFIED
             -> specSize = View.MeasureSpec.getSize(widthMeasureSpec)
         }
-        mWidth = specSize
+        mWidth = specSize.toFloat()
+        rightOffset = mWidth - mFgRightPadding
+        setMeasuredDimension(mWidth.toInt(), mHeight.toInt())
+    }
 
-        specMode = View.MeasureSpec.getMode(heightMeasureSpec)
-        when (specMode) {
-            View.MeasureSpec.EXACTLY, View.MeasureSpec.AT_MOST, View.MeasureSpec.UNSPECIFIED
-            -> {
-                val rect = Rect()
-                textPaint.getTextBounds("啊", 0, 1, rect)
-                specSize = (leftArrow.height * 2 + selectedLinePaint.strokeWidth +rect.height() * 2).toInt()
-            }
-        }
-        mHeight = specSize
 
-        rightOffset = mWidth - padding
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
         if (mText != null) {
-            interval = (mWidth - padding) / mText!!.size
+            interval = ((mWidth - mFgLeftPadding - mFgRightPadding) / mText!!.size).toInt()
         }
-
-        setMeasuredDimension(mWidth, mHeight)
     }
 
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (mText != null) {
-            canvas!!.drawLine(padding.toFloat(), (mHeight / 2).toFloat(), mWidth.toFloat() - padding, (mHeight / 2).toFloat(), backgroundLinePaint)
-            canvas.drawLine(leftOffset.toFloat(), (mHeight / 2).toFloat(), rightOffset.toFloat(), (mHeight / 2).toFloat(), selectedLinePaint)
-            canvas.drawBitmap(leftArrow, leftOffset - leftArrow.width.toFloat() / 2, leftArrow.height / 2 + (mHeight / 2).toFloat(), textPaint)
-            canvas.drawBitmap(rightArrow, rightOffset - rightArrow.width.toFloat() / 2, rightArrow.height / 2 + (mHeight / 2).toFloat(), textPaint)
+        // 首先画背景圆角矩形
+        mBgLinePaint.color = context!!.resources.getColor(R.color.colorPrimary)
+        mBgLinePaint.strokeWidth = mBgHeight
+        mBgLinePaint.style = Paint.Style.FILL
 
-            val rect = Rect()
-            leftText = mText!![(leftOffset - padding) / interval]
-            rightText = mText!![if (((rightOffset) / interval) > mText!!.size - 1) mText!!.size - 1 else rightOffset / interval]
-            textPaint.getTextBounds(leftText, 0, leftText.length, rect)
-            canvas.drawText(leftText, leftOffset.toFloat() - rect.width() / 2, (mHeight / 2).toFloat() - rect.height() / 2, textPaint)
-            textPaint.getTextBounds(rightText, 0, rightText.length, rect)
-            canvas.drawText(rightText, rightOffset.toFloat() - rect.width() / 2, (mHeight / 2).toFloat() - rect.height() / 2, textPaint)
-        }
+        canvas!!.drawRoundRect(mBgLeftPadding, mHeight - mBgHeight, mWidth - mBgRightPadding, mBgHeight, mBgHeight / 2, mBgHeight / 2, mBgLinePaint)
+
+        // 设置矩形边框
+        mBgLinePaint.color = context!!.resources.getColor(R.color.colorPrimaryDark)
+        mBgLinePaint.strokeWidth = 5f
+        mBgLinePaint.style = Paint.Style.STROKE
+        canvas.drawRoundRect(mBgLeftPadding, mHeight - mBgHeight, mWidth - mBgRightPadding, mBgHeight, mBgHeight / 2, mBgHeight / 2, mBgLinePaint)
+
+
+        // 画前景
+        mFgLinePaint.color = Color.parseColor("#4cFFFFFF")
+        mFgLinePaint.strokeWidth = mFgHeight
+        mFgLinePaint.style = Paint.Style.FILL
+        canvas.drawRoundRect(leftOffset, mHeight - mFgHeight, rightOffset, mFgHeight, mFgHeight / 2, mFgHeight / 2, mFgLinePaint)
+
+        // 设置矩形边框
+        mFgLinePaint.color = Color.parseColor("#7FFFFFFF")
+        mFgLinePaint.strokeWidth = 5f
+        mFgLinePaint.style = Paint.Style.STROKE
+        canvas.drawRoundRect(leftOffset, mHeight - mFgHeight, rightOffset, mFgHeight, mFgHeight / 2, mFgHeight / 2, mFgLinePaint)
+
+        canvas.drawBitmap(mHandBitmap, leftOffset + dp2px(context, 15f), mHeight / 2 - mHandBitmap.height / 2, mBgLinePaint)
+        canvas.drawBitmap(mHandBitmap, rightOffset - dp2px(context, 15f) - mHandBitmap.width, mHeight / 2 - mHandBitmap.height / 2, mBgLinePaint)
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = event!!.x
         val y = event.y
+        parent.requestDisallowInterceptTouchEvent(true)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 lastX = x
                 lastY = y
-                selectedArrow = collide(event)
+                selectedHand = collide(event)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 val offsetX = x - lastX
-                if (selectedArrow == SELECTED_LEFT) {
+                if (selectedHand == SELECTED_LEFT) {
                     leftOffset += offsetX.toInt()
-                    if (leftOffset >= rightOffset - interval) leftOffset = rightOffset - interval
-                    if (leftOffset < padding) leftOffset = padding
+                    if (leftOffset >= rightOffset - interval * 5) leftOffset = rightOffset - interval * 5
+                    if (leftOffset < mFgLeftPadding) leftOffset = mFgLeftPadding
                 }
 
-                if (selectedArrow == SELECTED_RIGHT) {
+                if (selectedHand == SELECTED_RIGHT) {
                     rightOffset += offsetX.toInt()
-                    if (rightOffset > mWidth - padding) rightOffset = mWidth - padding
-                    if (rightOffset <= leftOffset + interval) rightOffset = leftOffset + interval
-                    if (rightOffset < padding) rightOffset = padding
+                    if (rightOffset > mWidth - mFgRightPadding) rightOffset = mWidth - mFgRightPadding
+                    if (rightOffset <= leftOffset + interval * 5) rightOffset = leftOffset + interval * 5
+                    if (rightOffset < mFgRightPadding) rightOffset = mFgRightPadding
                 }
+
+
+                if (mText != null && mText!!.isNotEmpty()) {
+                    leftText = mText!![((leftOffset - mFgLeftPadding) / interval).toInt()]
+                    rightText = mText!![if (((rightOffset - mFgLeftPadding) / interval) > mText!!.size - 1) mText!!.size - 1 else ((rightOffset - mFgLeftPadding) / interval).toInt()]
+
+                    if (mTextChangeListener != null) {
+                        value.left = leftText
+                        value.right = rightText
+                        mTextChangeListener!!.onTextChange(value)
+                    }
+                }
+
                 invalidate()
 
                 lastX = x
             }
         }
-        return super.onTouchEvent(event)
+        return true
     }
+
+    fun setText(text: List<String>){
+        mText = text
+        postInvalidate()
+    }
+
 
     /**
      * 判断点击的是否是两个其中的一个， L左边 R右边
      */
     private fun collide(event: MotionEvent): String {
-        if (event.rawX > leftOffset - leftArrow.width / 2 && event.rawX < leftOffset + leftArrow.width / 2) {
+        if (event.x > leftOffset && event.x < leftOffset + mHandBitmap.width + dp2px(context, 35f)) {
             return SELECTED_LEFT
         }
 
-        if (event.rawX > rightOffset - padding - leftArrow.width / 2 && event.rawX < rightOffset + leftArrow.width / 2) {
+        if (event.x > rightOffset - mHandRightPadding && event.x < rightOffset + mHandBitmap.width / 2) {
             return SELECTED_RIGHT
         }
 
         return ""
     }
 
-
-    /**
-     * 设置文本
-     */
-    fun setText(text: List<String>) {
-        this.mText = text
-        invalidate()
+    companion object {
+        private val SELECTED_LEFT = "L"
+        private val SELECTED_RIGHT = "R"
     }
 
-    /**
-     * 获取值
-     */
-    fun getValue(): Value{
-        return Value(leftText, rightText)
+    interface OnTextChangedListener {
+        fun onTextChange(value: Value)
     }
 
-    data class Value(var left:String, var right:String)
+    fun setOnTextChangedListener(l: OnTextChangedListener){
+        mTextChangeListener = l
+    }
 
-    private fun dp2px(context: Context, dpValue: Float): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.resources.displayMetrics).toInt()
+    data class Value(var left: String, var right: String)
+
+    private fun dp2px(context: Context, dpValue: Float): Float {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.resources.displayMetrics)
     }
 
     private fun sp2px(context: Context, spValue: Float): Int {
@@ -180,5 +222,25 @@ class DoublySeekBar(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) 
 
     private fun px2sp(context: Context, pxValue: Float): Int {
         return (pxValue / context.resources.displayMetrics.scaledDensity + 0.5f).toInt()
+    }
+
+    private fun changeBitmapSize(res: Int, newWidth: Int, newHeight: Int): Bitmap {
+        var bitmap = BitmapFactory.decodeResource(resources, res)
+        val width = bitmap.width
+        val height = bitmap.height
+
+        //计算压缩的比率
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+
+        //获取想要缩放的matrix
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+
+        //获取新的bitmap
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+        bitmap.width
+        bitmap.height
+        return bitmap
     }
 }

@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
 
-//     private const val BASE_URL = "http://192.168.164.120:5020" // 2.4
-    private const val BASE_URL = "http://192.168.1.3:5020" // 家
+     private const val BASE_URL = "http://192.168.162.141:5020" // 2.4
+//    private const val BASE_URL = "http://192.168.1.3:5020" // 家
 
     private val mRetrofit: Retrofit
 

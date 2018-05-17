@@ -2,11 +2,124 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/gray1"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/gray1"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:id="@+id/select_city_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/dp_10">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_city"/>
+
+        <TextView
+            android:id="@+id/t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="选择城市"
+            android:textColor="#333"
+            android:textSize="@dimen/sp_16"/>
 
 
+        <TextView
+            android:id="@+id/currentCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/t"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="当前城市: 成都"
+            android:textColor="#888"
+            android:textSize="@dimen/sp_14"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/select_job_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1px"
+        android:background="@color/white"
+        android:padding="@dimen/dp_10">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_2"
+            android:src="@mipmap/icon_work"/>
+
+        <TextView
+            android:id="@+id/t1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="选择工作"
+            android:textColor="#333"
+            android:textSize="@dimen/sp_16"/>
+
+
+        <TextView
+            android:id="@+id/currentJob"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/t1"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="当前工作: Android"
+            android:textColor="#888"
+            android:textSize="@dimen/sp_14"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/select_salary_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1px"
+        android:background="@color/white"
+        android:padding="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_4"
+            android:src="@mipmap/icon_salary"/>
+
+
+        <TextView
+            android:id="@+id/t2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="选择薪资范围"
+            android:textColor="#333"
+            android:textSize="@dimen/sp_16"/>
+
+
+        <TextView
+            android:id="@+id/currentSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/t2"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="当前薪资: 不限"
+            android:textColor="#888"
+            android:textSize="@dimen/sp_14"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

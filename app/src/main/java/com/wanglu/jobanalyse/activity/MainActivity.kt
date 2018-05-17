@@ -18,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.orhanobut.hawk.Hawk
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.fragment.JobAnalyseFragment
+import com.wanglu.jobanalyse.fragment.JobSetFragment
 import com.wanglu.jobanalyse.fragment.MainJobFragment
 import com.wanglu.jobanalyse.model.Job
 import com.wanglu.jobanalyse.model.JobCategory
@@ -25,31 +26,34 @@ import com.wanglu.jobanalyse.network.CustomRequestCallback
 import com.wanglu.jobanalyse.network.RetrofitFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import org.simple.eventbus.EventBus
+import org.simple.eventbus.Subscriber
 import java.util.stream.Collectors
 
 class MainActivity : BaseActivity() {
 
 
-    private lateinit var mSelectedArea: String // 选中的地区
+    private var mSelectedArea: String? = "" // 选中的地区
 
-    private lateinit var mViewCustomChoiceJobDialog: View
+    private var mViewCustomChoiceJobDialog: View? = null
 
-    private lateinit var mSpinnerCategoryChoice: Spinner
-    private lateinit var mSpinnerJobChoice: Spinner
-    private lateinit var mJobCategoryList: List<JobCategory>
-    private lateinit var mHandler: Handler
-    private lateinit var mJobList: List<Job>
-    private lateinit var mSelectedJobId: String
-    private lateinit var mSelectedJobName: String
+    private var mSpinnerCategoryChoice: Spinner? = null
+    private var mSpinnerJobChoice: Spinner? = null
+    private var mJobCategoryList: List<JobCategory>? = null
+    private var mHandler: Handler? = null
+    private var mJobList: List<Job>? = null
+    private var mSelectedJobId: String? = null
+    private var mSelectedJobName: String? = null
     private var mTitleClickTime: Long = 0
     private var mMainJobFragment: MainJobFragment? = null
     private var mJobAnalyseFragment: JobAnalyseFragment? = null
+    private var mJobSettingFragment: JobSetFragment? = null
 
 
     @SuppressLint("ResourceType", "HandlerLeak")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        EventBus.getDefault().register(this)
 
 
         navigation.setOnNavigationItemSelectedListener({ item ->
@@ -62,6 +66,7 @@ class MainActivity : BaseActivity() {
                 iv_search.visibility = View.VISIBLE
                 tv_title.text = mSelectedArea + " - " + mSelectedJobName
                 showFragment(transaction, mMainJobFragment)
+
             }
 
             if (id == R.id.navigation_analyse) {
@@ -72,6 +77,17 @@ class MainActivity : BaseActivity() {
                     transaction.add(R.id.fragment_container, mJobAnalyseFragment).commit()
                 } else
                     showFragment(transaction, mJobAnalyseFragment)
+            }
+
+
+            if (id == R.id.navigation_setting) {
+                tv_title.text = "工作设置"
+                iv_search.visibility = View.GONE
+                if (mJobSettingFragment == null) {
+                    mJobSettingFragment = JobSetFragment()
+                    transaction.add(R.id.fragment_container, mJobSettingFragment).commit()
+                } else
+                    showFragment(transaction, mJobSettingFragment)
             }
 
 
@@ -89,10 +105,10 @@ class MainActivity : BaseActivity() {
         }
 
         mViewCustomChoiceJobDialog = LayoutInflater.from(this).inflate(R.layout.view_custom_choice_job_dialog, null)
-        mSpinnerCategoryChoice = mViewCustomChoiceJobDialog.findViewById(R.id.spinner_category_choice)
-        mSpinnerJobChoice = mViewCustomChoiceJobDialog.findViewById(R.id.spinner_job_choice)
-        mSpinnerCategoryChoice.prompt = "选择分类"
-        mSpinnerJobChoice.prompt = "选择职位"
+        mSpinnerCategoryChoice = mViewCustomChoiceJobDialog!!.findViewById(R.id.spinner_category_choice)
+        mSpinnerJobChoice = mViewCustomChoiceJobDialog!!.findViewById(R.id.spinner_job_choice)
+        mSpinnerCategoryChoice!!.prompt = "选择分类"
+        mSpinnerJobChoice!!.prompt = "选择职位"
 
 
         if (!Hawk.contains(JOB_CATEGORY)) {
@@ -157,7 +173,7 @@ class MainActivity : BaseActivity() {
                     else
                         tv_title.text = mSelectedArea
                     Hawk.put<String>(SELECTED_AREA, mSelectedArea)
-                    mHandler.sendEmptyMessage(1)
+                    mHandler!!.sendEmptyMessage(1)
                     EventBus.getDefault().post(mSelectedArea, "selected_city")
                     false
                 }
@@ -172,7 +188,7 @@ class MainActivity : BaseActivity() {
 
         MaterialDialog.Builder(this)
                 .title("请选择目标工作")
-                .customView(mViewCustomChoiceJobDialog, false)
+                .customView(mViewCustomChoiceJobDialog!!, false)
                 .positiveText("确定")
                 .onPositive { _, _ ->
 
@@ -213,15 +229,15 @@ class MainActivity : BaseActivity() {
     }
 
     private fun insertCategorySpinnerData() {
-        val data = mJobCategoryList.stream().map { it.categoryName }.collect(Collectors.toList())
+        val data = mJobCategoryList!!.stream().map { it.categoryName }.collect(Collectors.toList())
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, data)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mSpinnerCategoryChoice.adapter = adapter
+        mSpinnerCategoryChoice!!.adapter = adapter
 
-        mSpinnerCategoryChoice.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        mSpinnerCategoryChoice!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                Log.d("TAG", mJobCategoryList[i].categoryName)
-                mJobList = mJobCategoryList[i].job!!
+                Log.d("TAG", mJobCategoryList!![i].categoryName)
+                mJobList = mJobCategoryList!![i].job!!
                 insertJobSpinnerData()
             }
 
@@ -234,13 +250,13 @@ class MainActivity : BaseActivity() {
     }
 
     private fun insertJobSpinnerData() {
-        val data = mJobList.stream().map { it.jobName }.collect(Collectors.toList())
+        val data = mJobList!!.stream().map { it.jobName }.collect(Collectors.toList())
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, data)
-        mSpinnerJobChoice.adapter = adapter
-        mSpinnerJobChoice.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        mSpinnerJobChoice!!.adapter = adapter
+        mSpinnerJobChoice!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                mSelectedJobName = mJobList[i].jobName!!
-                mSelectedJobId = mJobList[i].jobId!!
+                mSelectedJobName = mJobList!![i].jobName!!
+                mSelectedJobId = mJobList!![i].jobId!!
                 Hawk.put<String>(SELECTED_JOB, mSelectedJobId)
                 Hawk.put<String>(SELECTED_JOB_NAME, mSelectedJobName)
             }
@@ -256,11 +272,21 @@ class MainActivity : BaseActivity() {
         transaction.hide(mMainJobFragment)
         if (mJobAnalyseFragment != null)
             transaction.hide(mJobAnalyseFragment)
+
+        if (mJobSettingFragment != null)
+            transaction.hide(mJobSettingFragment)
+
+
     }
 
     private fun showFragment(transaction: FragmentTransaction, fragment: Fragment?) {
         transaction.show(fragment)
         transaction.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     companion object {
@@ -269,7 +295,18 @@ class MainActivity : BaseActivity() {
         val JOB_CATEGORY = "job_category"
         val SELECTED_JOB = "selected_job"
         val SELECTED_JOB_NAME = "selected_job_name"
+        val SELECTED_SALARY = "selected_salary"
     }
 
+    @Subscriber(tag = "selected_city")
+    fun onEventSelectedCity(city: String) {
+        mSelectedArea = city
+    }
+
+
+    @Subscriber(tag = "selected_job")
+    fun onEventSelectedJob(job: String) {
+        mSelectedJobName = job
+    }
 
 }
