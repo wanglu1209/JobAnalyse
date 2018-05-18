@@ -8,7 +8,6 @@ import android.os.Message
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -192,6 +191,8 @@ class MainActivity : BaseActivity() {
                 .positiveText("确定")
                 .onPositive { _, _ ->
 
+                    Hawk.put<String>(SELECTED_JOB, mSelectedJobId)
+                    Hawk.put<String>(SELECTED_JOB_NAME, mSelectedJobName)
                     if (mMainJobFragment == null) {
                         mMainJobFragment = MainJobFragment()
                         val b = Bundle()
@@ -236,7 +237,6 @@ class MainActivity : BaseActivity() {
 
         mSpinnerCategoryChoice!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                Log.d("TAG", mJobCategoryList!![i].categoryName)
                 mJobList = mJobCategoryList!![i].job!!
                 insertJobSpinnerData()
             }
@@ -257,8 +257,6 @@ class MainActivity : BaseActivity() {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                 mSelectedJobName = mJobList!![i].jobName!!
                 mSelectedJobId = mJobList!![i].jobId!!
-                Hawk.put<String>(SELECTED_JOB, mSelectedJobId)
-                Hawk.put<String>(SELECTED_JOB_NAME, mSelectedJobName)
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {
@@ -304,7 +302,7 @@ class MainActivity : BaseActivity() {
     }
 
 
-    @Subscriber(tag = "selected_job")
+    @Subscriber(tag = "selected_job_name")
     fun onEventSelectedJob(job: String) {
         mSelectedJobName = job
     }

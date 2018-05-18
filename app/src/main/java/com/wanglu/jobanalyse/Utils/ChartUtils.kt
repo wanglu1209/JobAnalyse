@@ -11,6 +11,7 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.ViewPortHandler
@@ -96,6 +97,60 @@ object ChartUtils {
         colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
         dataSet.colors = colors
         val barData = BarData(dataSet)
+
+        barData.setValueTextSize(11f)
+        barData.setValueTextColor(Color.BLACK)
+        barChart.data = barData
+        barChart.highlightValues(null)
+        barChart.invalidate()
+    }
+
+
+    /**
+     * 设置柱状图数据和样式
+     */
+    fun setMultiBarChartDataAndStyle(barChart: BarChart, data: AnalyseModel){
+        barChart.description.isEnabled = false
+        barChart.setPinchZoom(false)
+        barChart.setDrawValueAboveBar(true)
+        barChart.setTouchEnabled(false)
+        val xAxis = barChart.xAxis
+        xAxis.textSize = 12f
+        xAxis.position = XAxisPosition.BOTTOM
+        xAxis.granularity = 1f // only intervals of 1 day
+        xAxis.valueFormatter = IndexAxisValueFormatter(data.text)
+        xAxis.setDrawGridLines(false)
+        barChart.axisLeft.textSize = 12f
+
+        val rightAxis = barChart.axisRight
+        rightAxis.setDrawGridLines(false)
+        rightAxis.isEnabled = false
+
+        val l = barChart.legend
+        l.textSize = 14f
+        l.xEntrySpace = 10f
+        l.yOffset = 10f
+        l.form = Legend.LegendForm.LINE
+        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM // 设置图例位置
+        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER // 设置图例位置
+        l.orientation = Legend.LegendOrientation.HORIZONTAL // 设置图例显示方向
+
+        val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
+        colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
+        val dataSets = ArrayList<IBarDataSet>()
+
+        for((i, d) in data.multiLineValue!!.withIndex()){
+            val values = ArrayList<BarEntry>()
+            d.value!!.indices.mapTo(values) { BarEntry(it.toFloat(), d.value!![it].toFloat()) }
+            val dataSet = BarDataSet(values, d.text)
+            dataSet.color = colors[i]
+            dataSet.valueTextSize = 12f
+            dataSet.valueFormatter = MyValueFormatter()
+            dataSets.add(dataSet)
+        }
+
+
+        val barData = BarData(dataSets)
 
         barData.setValueTextSize(11f)
         barData.setValueTextColor(Color.BLACK)
