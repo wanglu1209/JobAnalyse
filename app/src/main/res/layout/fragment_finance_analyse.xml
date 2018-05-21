@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray1">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/financePieChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/white"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="1px"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="融资情况所对应的工资"
+                android:textColor="@color/red1"
+                android:textSize="@dimen/sp_18"/>
+
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/financeBarChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/white"/>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <include layout="@layout/view_loading"/>
+
+</android.support.constraint.ConstraintLayout>

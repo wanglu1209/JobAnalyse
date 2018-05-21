@@ -25,7 +25,7 @@ import java.text.DecimalFormat
 object ChartUtils {
     // 设置PieChart属性和值
     fun setPieDataAndStyle(pieChart: PieChart, data: AnalyseModel, centerText: String) {
-
+        pieChart.clear()
         pieChart.setExtraOffsets(0f, 10f, 0f, 0f)   // 设置偏移
         pieChart.description.isEnabled = false
         pieChart.setUsePercentValues(true)  // 设置只显示百分比
@@ -36,6 +36,7 @@ object ChartUtils {
         l.textSize = 14f
         l.xEntrySpace = 10f
         l.yOffset = 10f
+        l.isWordWrapEnabled = true
         l.form = Legend.LegendForm.LINE
         l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM // 设置图例位置
         l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER // 设置图例位置
@@ -65,7 +66,8 @@ object ChartUtils {
     /**
      * 设置柱状图数据和样式
      */
-    fun setBarChartDataAndStyle(barChart: BarChart, data: AnalyseModel){
+    fun setBarChartDataAndStyle(barChart: BarChart, data: AnalyseModel) {
+        barChart.clear()
         barChart.description.isEnabled = false
         barChart.setPinchZoom(false)
         barChart.setDrawValueAboveBar(true)
@@ -77,6 +79,7 @@ object ChartUtils {
         xAxis.valueFormatter = IndexAxisValueFormatter(data.text)
         xAxis.setDrawGridLines(false)
         barChart.axisLeft.textSize = 12f
+        barChart.setNoDataText("暂无数据")
 
         val rightAxis = barChart.axisRight
         rightAxis.setDrawGridLines(false)
@@ -91,25 +94,28 @@ object ChartUtils {
         l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER // 设置图例位置
         l.orientation = Legend.LegendOrientation.HORIZONTAL // 设置图例显示方向
 
-        val entries = (0 until data.value!!.size).map { BarEntry(it.toFloat(), data.value!![it].toFloat()) }
-        val dataSet = BarDataSet(entries, "")
-        val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
-        colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
-        dataSet.colors = colors
-        val barData = BarData(dataSet)
+        if(data.value != null) {
+            val entries = (0 until data.value!!.size).map { BarEntry(it.toFloat(), data.value!![it].toFloat()) }
+            val dataSet = BarDataSet(entries, "")
+            val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
+            colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
+            dataSet.colors = colors
+            val barData = BarData(dataSet)
 
-        barData.setValueTextSize(11f)
-        barData.setValueTextColor(Color.BLACK)
-        barChart.data = barData
-        barChart.highlightValues(null)
-        barChart.invalidate()
+            barData.setValueTextSize(11f)
+            barData.setValueTextColor(Color.BLACK)
+            barChart.data = barData
+            barChart.highlightValues(null)
+            barChart.invalidate()
+        }
     }
 
 
     /**
      * 设置柱状图数据和样式
      */
-    fun setMultiBarChartDataAndStyle(barChart: BarChart, data: AnalyseModel){
+    fun setMultiBarChartDataAndStyle(barChart: BarChart, data: AnalyseModel) {
+        barChart.clear()
         barChart.description.isEnabled = false
         barChart.setPinchZoom(false)
         barChart.setDrawValueAboveBar(true)
@@ -121,6 +127,7 @@ object ChartUtils {
         xAxis.valueFormatter = IndexAxisValueFormatter(data.text)
         xAxis.setDrawGridLines(false)
         barChart.axisLeft.textSize = 12f
+        barChart.setNoDataText("暂无数据")
 
         val rightAxis = barChart.axisRight
         rightAxis.setDrawGridLines(false)
@@ -132,33 +139,41 @@ object ChartUtils {
         l.yOffset = 10f
         l.form = Legend.LegendForm.LINE
         l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM // 设置图例位置
-        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER // 设置图例位置
+        l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT // 设置图例位置
         l.orientation = Legend.LegendOrientation.HORIZONTAL // 设置图例显示方向
 
         val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
         colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
         val dataSets = ArrayList<IBarDataSet>()
 
-        for((i, d) in data.multiLineValue!!.withIndex()){
-            val values = ArrayList<BarEntry>()
-            d.value!!.indices.mapTo(values) { BarEntry(it.toFloat(), d.value!![it].toFloat()) }
-            val dataSet = BarDataSet(values, d.text)
-            dataSet.color = colors[i]
-            dataSet.valueTextSize = 12f
-            dataSet.valueFormatter = MyValueFormatter()
-            dataSets.add(dataSet)
+        if (data.multiLineValue != null) {
+            for ((i, d) in data.multiLineValue!!.withIndex()) {
+                val values = ArrayList<BarEntry>()
+                d.value!!.indices.mapTo(values) { BarEntry(it.toFloat(), d.value!![it].toFloat()) }
+                val dataSet = BarDataSet(values, d.text)
+                dataSet.color = colors[i]
+                dataSet.valueTextSize = 12f
+                dataSet.valueFormatter = MyValueFormatter()
+                dataSets.add(dataSet)
+            }
+
+
+            val barData = BarData(dataSets)
+
+            barData.setValueTextSize(11f)
+            barData.setValueTextColor(Color.BLACK)
+            barChart.data = barData
+//      float groupSpace = 0.08f;
+//      float barSpace = 0.03f; // x4 DataSet
+//      float barWidth = 0.2f; // x4 DataSet
+//      (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
+            val barWidth = (1f - 0.10f - 0.05f * data.multiLineValue!!.size) / data.multiLineValue!!.size
+            barChart.barData.barWidth = barWidth
+            barChart.groupBars(-0.5f, 0.10f, 0.05f)
+            barChart.highlightValues(null)
+            barChart.invalidate()
         }
-
-
-        val barData = BarData(dataSets)
-
-        barData.setValueTextSize(11f)
-        barData.setValueTextColor(Color.BLACK)
-        barChart.data = barData
-        barChart.highlightValues(null)
-        barChart.invalidate()
     }
-
 
     fun setMultiLineChartData(lineChart: LineChart, data: AnalyseModel) {
 
@@ -184,7 +199,7 @@ object ChartUtils {
         val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
         colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
 
-        for((i, d) in data.multiLineValue!!.withIndex()){
+        for ((i, d) in data.multiLineValue!!.withIndex()) {
             val values = ArrayList<Entry>()
             d.value!!.indices.mapTo(values) { Entry(it.toFloat(), d.value!![it].toFloat()) }
             val dataSet = LineDataSet(values, d.text)
@@ -207,6 +222,7 @@ object ChartUtils {
         lineChart.invalidate()
     }
 
+
     class MyValueFormatter : IValueFormatter {
 
         private val mFormat: DecimalFormat = DecimalFormat("#") // 不保留小数
@@ -215,7 +231,6 @@ object ChartUtils {
             return mFormat.format(value.toDouble())
         }
     }
-
 
 
 }

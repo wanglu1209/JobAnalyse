@@ -54,6 +54,9 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
 
+        if ("" == Hawk.get(SELECTED_SALARY, "")){
+            Hawk.put(SELECTED_SALARY, "不限")
+        }
 
         navigation.setOnNavigationItemSelectedListener({ item ->
             val transaction = supportFragmentManager.beginTransaction()

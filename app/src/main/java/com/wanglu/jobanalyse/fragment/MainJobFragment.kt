@@ -6,9 +6,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.orhanobut.hawk.Hawk
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.Utils.Utils
 import com.wanglu.jobanalyse.activity.CommonWebActivity
+import com.wanglu.jobanalyse.activity.MainActivity
 import com.wanglu.jobanalyse.adapter.MainJobAdapter
 import com.wanglu.jobanalyse.model.BaseModule
 import com.wanglu.jobanalyse.model.MainJob
@@ -29,15 +31,14 @@ import java.util.*
 class MainJobFragment : BaseFragment() {
 
 
-
     private lateinit var mJobAdapter: MainJobAdapter
     private var page = 1
 
     private val mJobs = ArrayList<MainJob>()
 
-    private var mSelectedCity: String? = null
-    private var mSelectedJob: String? = null
     private var mEmptyView: View? = null
+
+    private var mSelectedSalary: String = Hawk.get(MainActivity.SELECTED_SALARY, "")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_job_list, container, false)
@@ -58,9 +59,6 @@ class MainJobFragment : BaseFragment() {
         rvJob.layoutManager = LinearLayoutManager(context)
         rvJob.adapter = mJobAdapter
         toggleRefreshing(true)
-        val arguments = arguments
-        mSelectedCity = arguments!!.getString("city", "")
-        mSelectedJob = arguments.getString("job_id")
 
         rvJob.addItemDecoration(HorizontalDividerItemDecoration.Builder(context).size(1).build())
 
@@ -92,7 +90,7 @@ class MainJobFragment : BaseFragment() {
     private fun getCityJobInfo() {
         RetrofitFactory
                 .requestApi
-                .getCityJobInfoList(mSelectedCity, mSelectedJob, page)
+                .getCityJobInfoList(mSelectedCity, mSelectedJob, mSelectedSalary, page)
                 .enqueue(object : CustomRequestCallback<List<MainJob>> {
                     override fun onParse(data: List<MainJob>) {
                         toggleRefreshing(false)
@@ -134,6 +132,12 @@ class MainJobFragment : BaseFragment() {
     @Subscriber(tag = "selected_job")
     fun onEventSelectedJob(job: String) {
         mSelectedJob = job
+        reRequestJobInfo()
+    }
+
+    @Subscriber(tag = "change_salary")
+    fun onEventChangedSalary(salary: String) {
+        mSelectedSalary = salary
         reRequestJobInfo()
     }
 

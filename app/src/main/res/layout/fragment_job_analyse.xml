@@ -67,7 +67,7 @@
         android:orientation="horizontal">
 
         <FrameLayout
-            android:id="@+id/layout_create_time"
+            android:id="@+id/layout_finance"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -79,7 +79,7 @@
                 android:drawablePadding="@dimen/dp_5"
                 android:drawableTop="@mipmap/icon_createtime_analyse"
                 android:gravity="center"
-                android:text="发布时间"
+                android:text="融资分析"
                 android:textColor="#444"
                 android:textSize="@dimen/sp_18"/>
 
@@ -118,6 +118,7 @@
     <LinearLayout
         android:id="@+id/layout_company_info"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="120dp"
         android:background="@color/white"
         android:orientation="horizontal">

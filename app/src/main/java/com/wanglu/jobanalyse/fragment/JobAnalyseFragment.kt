@@ -25,7 +25,7 @@ class JobAnalyseFragment : BaseFragment(), View.OnClickListener{
 
         layout_salary.setOnClickListener(this)
         layout_district.setOnClickListener(this)
-        layout_create_time.setOnClickListener(this)
+        layout_finance.setOnClickListener(this)
         layout_work_year.setOnClickListener(this)
         layout_company_info.setOnClickListener(this)
     }
@@ -36,9 +36,11 @@ class JobAnalyseFragment : BaseFragment(), View.OnClickListener{
         when (view.id) {
             R.id.layout_salary -> title = "薪资分析"
             R.id.layout_district -> title = "区域分析"
-            R.id.layout_create_time -> {
+            R.id.layout_finance -> {
+                title = "融资分析"
             }
             R.id.layout_work_year -> {
+                title = "年限分析"
             }
             R.id.layout_company_info -> {
             }

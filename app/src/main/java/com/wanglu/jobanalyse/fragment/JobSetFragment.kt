@@ -82,7 +82,6 @@ class JobSetFragment : BaseFragment(), View.OnClickListener {
                 .build()
 
 
-
         val areaList = resources.getStringArray(R.array.area)
         selectAreaDialog = MaterialDialog.Builder(context!!)
                 .title("请选择目标城市")
@@ -101,10 +100,8 @@ class JobSetFragment : BaseFragment(), View.OnClickListener {
         selectSalaryText = selectSalaryView!!.findViewById(R.id.selectSalaryText)
         selectBtn = selectSalaryView!!.findViewById(R.id.selectSalaryBtn)
 
-        salaryRange.add("不限")
         (1..30 step 2).mapTo(salaryRange) { it.toString() + "K" }
         (40..100 step 10).mapTo(salaryRange) { it.toString() + "K" }
-        salaryRange.add("不限")
 
         seekBar!!.setText(salaryRange)
 
@@ -116,10 +113,11 @@ class JobSetFragment : BaseFragment(), View.OnClickListener {
 
         selectBtn!!.setOnClickListener {
             var text = selectSalaryText!!.text
-            if (text == "不限 - 不限") {
+            if (text == "1K - 100K") {
                 text = "不限"
             }
             currentSalary.text = "当前薪资: " + text
+            EventBus.getDefault().post(text, "change_salary")
             mBottomSheetDialog!!.dismiss()
 
             // 存储薪资范围

@@ -17,8 +17,8 @@ import retrofit2.http.Path;
 
 public interface RequestApi {
 
-    @GET("/api/getCityJobInfoList/{city}/{category}/{pn}")
-    Call<BaseModule<List<MainJob>>> getCityJobInfoList(@Path("city") String city, @Path("category") String category, @Path("pn") int pn);
+    @GET("/api/getCityJobInfoList/{city}/{category}/{range}/{pn}")
+    Call<BaseModule<List<MainJob>>> getCityJobInfoList(@Path("city") String city, @Path("category") String category, @Path("range") String range, @Path("pn") int pn);
 
     @GET("/api/searchCompany/{city}/{category}/{text}")
     Call<BaseModule<List<MainJob>>> searchCompany(@Path("city") String city, @Path("category") String category, @Path("text") String text);
@@ -34,6 +34,18 @@ public interface RequestApi {
 
     @GET("/api/getDistrictSalaryAvg/{city}/{category}")
     Call<BaseModule<AnalyseModel>> getDistrictSalaryAvg(@Path("city") String city, @Path("category") String category);
+
+    @GET("/api/getWorkYearGraph/{city}/{category}")
+    Call<BaseModule<AnalyseModel>> getWorkYearGraph(@Path("city") String city, @Path("category") String category);
+
+    @GET("/api/getWorkYearDistributing/{city}/{category}")
+    Call<BaseModule<AnalyseModel>> getWorkYearDistributing(@Path("city") String city, @Path("category") String category);
+
+    @GET("/api/getFinanceStageDistributing/{city}/{category}")
+    Call<BaseModule<AnalyseModel>> getFinanceStageDistributing(@Path("city") String city, @Path("category") String category);
+
+    @GET("/api/getSalaryByFinanceStage/{city}/{category}")
+    Call<BaseModule<AnalyseModel>> getSalaryByFinanceStage(@Path("city") String city, @Path("category") String category);
 
     @GET("/api/getSalaryTop10/{city}/{category}")
     Call<BaseModule<List<MainJob>>> getSalaryTop10(@Path("city") String city, @Path("category") String category);

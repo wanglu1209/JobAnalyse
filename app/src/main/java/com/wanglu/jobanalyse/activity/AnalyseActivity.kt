@@ -12,7 +12,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.orhanobut.hawk.Hawk
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.fragment.DistrictAnalyseFragment
+import com.wanglu.jobanalyse.fragment.FinanceAnalyseFragment
 import com.wanglu.jobanalyse.fragment.SalaryAnalyseFragment
+import com.wanglu.jobanalyse.fragment.WorkYearAnalyseFragment
 import com.wanglu.jobanalyse.model.Job
 import com.wanglu.jobanalyse.model.JobCategory
 import kotlinx.android.synthetic.main.view_toolbar.*
@@ -62,6 +64,14 @@ class AnalyseActivity : BaseActivity() {
             if (title == "区域分析"){
                 toolbar.title = "区域分析"
                 transaction.add(R.id.layout_fragment_container, DistrictAnalyseFragment())
+            }
+            if (title == "年限分析"){
+                toolbar.title = "年限分析"
+                transaction.add(R.id.layout_fragment_container, WorkYearAnalyseFragment())
+            }
+            if (title == "融资分析"){
+                toolbar.title = "融资分析"
+                transaction.add(R.id.layout_fragment_container, FinanceAnalyseFragment())
             }
             transaction.commit()
             toolbar.subtitle = mSelectedCity + " - " + mSelectedJobName

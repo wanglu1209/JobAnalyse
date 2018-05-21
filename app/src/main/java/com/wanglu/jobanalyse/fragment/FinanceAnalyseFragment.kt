@@ -9,56 +9,45 @@ import com.wanglu.jobanalyse.Utils.ChartUtils
 import com.wanglu.jobanalyse.model.AnalyseModel
 import com.wanglu.jobanalyse.network.CustomRequestCallback
 import com.wanglu.jobanalyse.network.RetrofitFactory
-import kotlinx.android.synthetic.main.fragment_district_analyse.*
+import kotlinx.android.synthetic.main.fragment_finance_analyse.*
 import kotlinx.android.synthetic.main.view_loading.*
 import org.simple.eventbus.EventBus
 import org.simple.eventbus.Subscriber
 
 /**
- * Created by WangLu on 2018/5/2.
+ * Created by WangLu on 2018/5/21.
  */
-class DistrictAnalyseFragment : BaseFragment() {
+class FinanceAnalyseFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         EventBus.getDefault().register(this)
-        return layoutInflater.inflate(R.layout.fragment_district_analyse, container, false)
+        return inflater.inflate(R.layout.fragment_finance_analyse, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        getDistrictJobDistributing()
-        getDistrictSalaryAvg()
+        requestData()
     }
 
 
-    /**
-     * 获取区域工作分布
-     */
-    private fun getDistrictJobDistributing(){
+
+    private fun requestData() {
         RetrofitFactory
                 .requestApi
-                .getDistrictJobDistributing(mSelectedCity, mSelectedJob)
-                .enqueue(object : CustomRequestCallback<AnalyseModel>{
+                .getFinanceStageDistributing(mSelectedCity, mSelectedJob)
+                .enqueue(object : CustomRequestCallback<AnalyseModel> {
                     override fun onParse(data: AnalyseModel) {
-                        ChartUtils.setPieDataAndStyle(districtPieChart, data, "各区域工作数量")
-                        loading_view.visibility = View.GONE
+                        ChartUtils.setPieDataAndStyle(financePieChart, data, "融资分布")
                     }
                 })
-    }
 
-
-    /**
-     * 获取区域平均工资
-     */
-    private fun getDistrictSalaryAvg(){
         RetrofitFactory
                 .requestApi
-                .getDistrictSalaryAvg(mSelectedCity, mSelectedJob)
-                .enqueue(object : CustomRequestCallback<AnalyseModel>{
+                .getSalaryByFinanceStage(mSelectedCity, mSelectedJob)
+                .enqueue(object : CustomRequestCallback<AnalyseModel> {
                     override fun onParse(data: AnalyseModel) {
-                        ChartUtils.setBarChartDataAndStyle(districtBarChart, data)
                         loading_view.visibility = View.GONE
+                        ChartUtils.setBarChartDataAndStyle(financeBarChart, data)
                     }
                 })
     }
@@ -68,20 +57,19 @@ class DistrictAnalyseFragment : BaseFragment() {
     private fun onChangeCityEvent(city: String) {
         mSelectedCity = city
         loading_view.visibility = View.VISIBLE
-        getDistrictJobDistributing()
-        getDistrictSalaryAvg()
+        requestData()
     }
 
     @Subscriber(tag = "change_job")
     private fun onChangeJobEvent(job: String) {
         mSelectedJob = job
         loading_view.visibility = View.VISIBLE
-        getDistrictJobDistributing()
-        getDistrictSalaryAvg()
+        requestData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         EventBus.getDefault().unregister(this)
     }
+
 }

@@ -5,10 +5,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.orhanobut.hawk.Hawk
 import com.wanglu.jobanalyse.R
 import com.wanglu.jobanalyse.Utils.ChartUtils
-import com.wanglu.jobanalyse.activity.MainActivity
 import com.wanglu.jobanalyse.adapter.SalaryAnalyseTop10Adapter
 import com.wanglu.jobanalyse.model.AnalyseModel
 import com.wanglu.jobanalyse.model.MainJob
@@ -27,8 +25,6 @@ import org.simple.eventbus.Subscriber
 class SalaryAnalyseFragment : BaseFragment() {
 
 
-    private lateinit var mSelectedCity: String
-    private lateinit var mSelectedJob: String
     private lateinit var mAnalyseTop10Adapter: SalaryAnalyseTop10Adapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,9 +39,6 @@ class SalaryAnalyseFragment : BaseFragment() {
     }
 
     private fun init() {
-
-        mSelectedCity = Hawk.get<String>(MainActivity.SELECTED_AREA)
-        mSelectedJob = Hawk.get<String>(MainActivity.SELECTED_JOB)
 
         rv_salary_top.layoutManager = LinearLayoutManager(context)
         mAnalyseTop10Adapter = SalaryAnalyseTop10Adapter()
@@ -99,7 +92,6 @@ class SalaryAnalyseFragment : BaseFragment() {
                     }
                 })
     }
-
 
     @Subscriber(tag = "change_city")
     private fun onChangeCityEvent(city: String) {
