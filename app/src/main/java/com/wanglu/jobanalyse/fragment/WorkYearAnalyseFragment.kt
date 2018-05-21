@@ -12,6 +12,7 @@ import com.wanglu.jobanalyse.network.RetrofitFactory
 import kotlinx.android.synthetic.main.fragment_work_year_analyse.*
 import kotlinx.android.synthetic.main.view_loading.*
 import org.simple.eventbus.EventBus
+import org.simple.eventbus.Subscriber
 
 /**
  * Created by WangLu on 2018/5/21.
@@ -50,5 +51,25 @@ class WorkYearAnalyseFragment : BaseFragment() {
                 })
     }
 
+    @Subscriber(tag = "change_city")
+    private fun onChangeCityEvent(city: String) {
+        mSelectedCity = city
+        loading_view.visibility = View.VISIBLE
+
+        requestData()
+    }
+
+    @Subscriber(tag = "change_job")
+    private fun onChangeJobEvent(job: String) {
+        mSelectedJob = job
+        loading_view.visibility = View.VISIBLE
+
+        requestData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        EventBus.getDefault().unregister(this)
+    }
 
 }
