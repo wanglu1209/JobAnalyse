@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
 
-     private const val BASE_URL = "http://www.d3collection.cn:5020"
+    private const val BASE_URL = "http://www.d3collection.cn:5020"
 
     private val mRetrofit: Retrofit
 
